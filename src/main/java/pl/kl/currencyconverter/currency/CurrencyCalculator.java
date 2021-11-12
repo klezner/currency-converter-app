@@ -1,7 +1,7 @@
 package pl.kl.currencyconverter.currency;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import pl.kl.currencyconverter.exception.CurrencyNotFoundException;
 import pl.kl.currencyconverter.nbp.Rate;
 import pl.kl.currencyconverter.nbp.Rates;
 
@@ -10,22 +10,46 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Component
 public class CurrencyCalculator {
+    public static final int BIG_DECIMAL_SCALE = 4;
+    private final String REGEX = ",";
+    private final String REPLACEMENT = "";
+    private final int TWO_CURRENCIES = 2;
 
     public BigDecimal calculateAmount(Currencies fromCurrency, Currencies toCurrency, BigDecimal amount, Rates allRates) {
-        final List<Rate> rates = allRates.getRates().stream()
-                .filter(rate -> isFromOrToCurrency(fromCurrency, toCurrency, rate))
-                .collect(Collectors.toList());
+        final List<Rate> rates = getRates(fromCurrency, toCurrency, allRates);
+
         if (isOneCurrencyPLN(rates)) {
             return calculateForPln(toCurrency, amount, rates);
         }
-        return BigDecimal.valueOf(-9.99);
+        return calculateForForeignCurrencies(fromCurrency, toCurrency, amount, rates);
+    }
+
+    private BigDecimal calculateForForeignCurrencies(Currencies fromCurrency, Currencies toCurrency, BigDecimal amount, List<Rate> rates) {
+        final Rate fromRate = rates.stream()
+                .filter(rate -> rate.getCode().equals(fromCurrency.name()))
+                .findFirst()
+                .orElseThrow(CurrencyNotFoundException::new);
+        final Rate toRate = rates.stream()
+                .filter(rate -> rate.getCode().equals(toCurrency.name()))
+                .findFirst()
+                .orElseThrow(CurrencyNotFoundException::new);
+
+        final BigDecimal rateFrom = new BigDecimal(fromRate.getMid()).setScale(BIG_DECIMAL_SCALE, RoundingMode.HALF_UP);
+        final BigDecimal rateTo = new BigDecimal(toRate.getMid()).setScale(BIG_DECIMAL_SCALE, RoundingMode.HALF_UP);
+
+        return rateFrom.divide(rateTo, RoundingMode.HALF_UP).multiply(amount).setScale(BIG_DECIMAL_SCALE, RoundingMode.HALF_UP);
+    }
+
+    private List<Rate> getRates(Currencies fromCurrency, Currencies toCurrency, Rates allRates) {
+        return allRates.getRates().stream()
+                .filter(rate -> isFromOrToCurrency(fromCurrency, toCurrency, rate))
+                .collect(Collectors.toList());
     }
 
     private BigDecimal calculateForPln(Currencies toCurrency, BigDecimal amount, List<Rate> rates) {
-        final BigDecimal rate = new BigDecimal(rates.get(0).getMid().replaceAll(",", ""));
+        final BigDecimal rate = new BigDecimal(rates.get(0).getMid().replaceAll(REGEX, REPLACEMENT));
 
         if (ifDestinationCurrencyIsPLN(toCurrency)) {
             return multiplyAmountByRate(amount, rate);
@@ -34,15 +58,15 @@ public class CurrencyCalculator {
     }
 
     private BigDecimal multiplyAmountByRate(BigDecimal amount, BigDecimal rate) {
-        return amount.setScale(4, RoundingMode.DOWN).multiply(rate).setScale(2, RoundingMode.DOWN);
+        return amount.setScale(BIG_DECIMAL_SCALE, RoundingMode.HALF_UP).multiply(rate).setScale(BIG_DECIMAL_SCALE, RoundingMode.HALF_UP);
     }
 
     private BigDecimal divideAmountByRate(BigDecimal amount, BigDecimal rate) {
-        return amount.setScale(4, RoundingMode.DOWN).divide(rate, RoundingMode.DOWN).setScale(2, RoundingMode.DOWN);
+        return amount.setScale(BIG_DECIMAL_SCALE, RoundingMode.HALF_UP).divide(rate, RoundingMode.HALF_UP).setScale(BIG_DECIMAL_SCALE, RoundingMode.HALF_UP);
     }
 
     private boolean isOneCurrencyPLN(List<Rate> rates) {
-        return rates.size() <= 1;
+        return rates.size() < TWO_CURRENCIES;
     }
 
     private boolean ifDestinationCurrencyIsPLN(Currencies toCurrency) {

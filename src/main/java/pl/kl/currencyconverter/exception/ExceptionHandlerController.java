@@ -20,7 +20,13 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler(SameCurrenciesGivenException.class)
     public ResponseEntity<String> handleSameCurrenciesGivenException(SameCurrenciesGivenException ex) {
-        log.error("Same currencies given");
+        log.error("Error = Message {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(CurrencyNotFoundException.class)
+    public ResponseEntity<String> handleCurrencyNotFoundException(CurrencyNotFoundException ex) {
+        log.error("Error = Message {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }
