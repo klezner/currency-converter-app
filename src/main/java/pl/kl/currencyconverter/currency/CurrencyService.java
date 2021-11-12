@@ -4,5 +4,5 @@ import java.math.BigDecimal;
 
 public interface CurrencyService {
 
-    String calculateValue(Currencies fromCurrency, Currencies toCurrency, BigDecimal amount);
+    BigDecimal calculateValue(Currencies fromCurrency, Currencies toCurrency, BigDecimal amount);
 }

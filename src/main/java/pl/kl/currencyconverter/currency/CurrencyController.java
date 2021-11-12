@@ -14,9 +14,9 @@ public class CurrencyController {
 
     @RequestMapping(method = RequestMethod.GET)
     public @ResponseBody
-    String getCalculatedValue(@RequestParam Currencies fromCurrency,
-                              @RequestParam Currencies toCurrency,
-                              @RequestParam BigDecimal amount) {
+    BigDecimal getCalculatedValue(@RequestParam Currencies fromCurrency,
+                                  @RequestParam Currencies toCurrency,
+                                  @RequestParam BigDecimal amount) {
 
         return currencyService.calculateValue(fromCurrency, toCurrency, amount);
     }

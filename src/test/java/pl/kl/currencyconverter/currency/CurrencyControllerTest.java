@@ -24,8 +24,8 @@ class CurrencyControllerTest {
     @Test
     void shouldReturnStatusOk_WhenRequestParametersAreGiven() throws Exception {
         final HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("fromCurrency", "PLN");
-        httpHeaders.add("toCurrency", "USD");
+        httpHeaders.add("fromCurrency", "USD");
+        httpHeaders.add("toCurrency", "PLN");
         httpHeaders.add("amount", "1");
 
         final MockHttpServletRequestBuilder params = MockMvcRequestBuilders
@@ -35,7 +35,7 @@ class CurrencyControllerTest {
         mockMvc.perform(params)
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("1")));
+                .andExpect(content().string(containsString("4.05")));
     }
 
     @Test
@@ -51,7 +51,7 @@ class CurrencyControllerTest {
     @Test
     void shouldReturnStatusBadRequest_WhenOneOfRequestParametersIsNotGiven() throws Exception {
         final HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("toCurrency", "USD");
+        httpHeaders.add("toCurrency", "PLN");
         httpHeaders.add("amount", "1");
 
         final MockHttpServletRequestBuilder params = MockMvcRequestBuilders
