@@ -3,6 +3,8 @@ package pl.kl.currencyconverter.currency;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequestMapping("/currency")
 @RequiredArgsConstructor
@@ -14,7 +16,7 @@ public class CurrencyController {
     public @ResponseBody
     String getCalculatedValue(@RequestParam Currencies fromCurrency,
                               @RequestParam Currencies toCurrency,
-                              @RequestParam String amount) {
+                              @RequestParam BigDecimal amount) {
 
         return currencyService.calculateValue(fromCurrency, toCurrency, amount);
     }
