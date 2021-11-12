@@ -8,8 +8,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import pl.kl.currencyconverter.exception.SameCurrenciesGivenException;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -61,5 +63,22 @@ class CurrencyControllerTest {
         mockMvc.perform(params)
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldReturnStatusBadRequest_whenCurrenciesAreTheSame() throws Exception {
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("fromCurrency", "USD");
+        httpHeaders.add("toCurrency", "USD");
+        httpHeaders.add("amount", "1");
+
+        final MockHttpServletRequestBuilder params = MockMvcRequestBuilders
+                .get("/currency")
+                .params(httpHeaders);
+
+        mockMvc.perform(params)
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof SameCurrenciesGivenException));
     }
 }
