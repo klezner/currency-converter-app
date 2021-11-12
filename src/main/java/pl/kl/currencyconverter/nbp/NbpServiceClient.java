@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 public class NbpServiceClient {
 
     private static final String BASE_URL = "http://api.nbp.pl/api/exchangerates/tables/A/";
-
     private final WebClient webClient;
+    private NbpServiceClientRepository nbpServiceClientRepository;
 
     public NbpServiceClient() {
         this.webClient = WebClient.builder()
@@ -24,10 +24,15 @@ public class NbpServiceClient {
     }
 
     public Rates getAllRates() {
-
-        return getAllExchangeRates().stream()
+        if (nbpServiceClientRepository != null) {
+            return nbpServiceClientRepository.getCollectedRates();
+        }
+        final Rates rates = getAllExchangeRates().stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Not found"));
+        nbpServiceClientRepository = new NbpServiceClientRepository(rates);
+
+        return rates;
     }
 
     private List<Rates> getAllExchangeRates() {
