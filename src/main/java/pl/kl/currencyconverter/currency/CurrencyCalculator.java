@@ -14,23 +14,34 @@ public class CurrencyCalculator {
 
     public BigDecimal calculateAmount(Currencies fromCurrency, Currencies toCurrency, BigDecimal amount, Rates allRates) {
         final List<Rate> rates = allRates.getRates().stream()
-                .filter(rate -> isFromCurrency(fromCurrency, rate))
+                .filter(rate -> isFromOrToCurrency(fromCurrency, toCurrency, rate))
                 .collect(Collectors.toList());
 
-        return calculateForPln(amount, rates);
+        return calculateForPln(toCurrency, amount, rates);
     }
 
-    private BigDecimal calculateForPln(BigDecimal amount, List<Rate> rates) {
+    private BigDecimal calculateForPln(Currencies toCurrency, BigDecimal amount, List<Rate> rates) {
         final BigDecimal rate = new BigDecimal(rates.get(0).getMid());
 
-        return multiplyAmountByRate(amount, rate);
+        if (ifDestinationCurrencyIsPLN(toCurrency)) {
+            return multiplyAmountByRate(amount, rate);
+        }
+        return divideAmountByRate(amount, rate);
+    }
+
+    private boolean ifDestinationCurrencyIsPLN(Currencies toCurrency) {
+        return toCurrency.name().equals(Currencies.PLN.name().replaceAll(",", ""));
     }
 
     private BigDecimal multiplyAmountByRate(BigDecimal amount, BigDecimal rate) {
         return amount.multiply(rate).setScale(2, RoundingMode.DOWN);
     }
 
-    private boolean isFromCurrency(Currencies fromCurrency, Rate rate) {
-        return fromCurrency.name().equals(rate.getCode());
+    private BigDecimal divideAmountByRate(BigDecimal amount, BigDecimal rate) {
+        return amount.divide(rate, RoundingMode.DOWN).setScale(2, RoundingMode.DOWN);
+    }
+
+    private boolean isFromOrToCurrency(Currencies fromCurrency, Currencies toCurrency, Rate rate) {
+        return fromCurrency.name().equals(rate.getCode()) || toCurrency.name().equals(rate.getCode());
     }
 }
