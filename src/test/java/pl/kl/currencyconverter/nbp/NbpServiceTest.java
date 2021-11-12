@@ -40,4 +40,30 @@ class NbpServiceTest {
         // then
         assertEquals(expectedAmount, calculatedAmount);
     }
+
+    @Test
+    public void fromUSDtoEUR() {
+        // given
+        final Currencies fromCurrency = Currencies.USD;
+        final Currencies toCurrency = Currencies.EUR;
+        final BigDecimal givenAmount = BigDecimal.valueOf(100);
+        final BigDecimal expectedAmount = BigDecimal.valueOf(87.3900).setScale(CurrencyCalculator.BIG_DECIMAL_SCALE, RoundingMode.HALF_UP);
+        // when
+        final BigDecimal calculatedAmount = nbpService.calculateValue(fromCurrency, toCurrency, givenAmount);
+        // then
+        assertEquals(expectedAmount, calculatedAmount);
+    }
+
+    @Test
+    public void fromEURtoUSD() {
+        // given
+        final Currencies fromCurrency = Currencies.EUR;
+        final Currencies toCurrency = Currencies.USD;
+        final BigDecimal givenAmount = BigDecimal.valueOf(100);
+        final BigDecimal expectedAmount = BigDecimal.valueOf(114.4300).setScale(CurrencyCalculator.BIG_DECIMAL_SCALE, RoundingMode.HALF_UP);
+        // when
+        final BigDecimal calculatedAmount = nbpService.calculateValue(fromCurrency, toCurrency, givenAmount);
+        // then
+        assertEquals(expectedAmount, calculatedAmount);
+    }
 }
