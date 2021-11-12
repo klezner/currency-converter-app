@@ -1,0 +1,21 @@
+package pl.kl.currencyconverter.currency;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/currency")
+@RequiredArgsConstructor
+public class CurrencyController {
+
+    private final CurrencyService currencyService;
+
+    @RequestMapping(method = RequestMethod.GET)
+    public @ResponseBody
+    String getCalculatedValue(@RequestParam Currencies fromCurrency,
+                              @RequestParam Currencies toCurrency,
+                              @RequestParam String amount) {
+
+        return currencyService.calculateValue(fromCurrency, toCurrency, amount);
+    }
+}
