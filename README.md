@@ -53,19 +53,18 @@ To execute the JAR file run:
 ## Usage
 
 Run:
-> http://localhost:8080/currency?fromCurrency=FROM_CUR&toCurrency=TO_CUR&amount=AMOUNT
-
+`http://localhost:8080/currency?fromCurrency=FROM_CUR&toCurrency=TO_CUR&amount=AMOUNT`
 in your browser or Postman where:
 
-`FROM_CUR` is currency you want to convert from,
+`FROM_CUR` is currency you want to convert from (in ISO format),
 
-`TO_CUR` is currency you want to convert to,
+`TO_CUR` is currency you want to convert to (in ISO format),
 
 `AMOUNT` is amount of money you want to convert.
 
 ## Project Status
 
-> roject is: _complete_
+> Project is: _complete_
 
 ## Contact
 
