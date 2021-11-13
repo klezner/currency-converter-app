@@ -25,7 +25,7 @@ class NbpServiceTest {
         final Currencies fromCurrency = Currencies.USD;
         final Currencies toCurrency = Currencies.PLN;
         final BigDecimal givenAmount = BigDecimal.valueOf(1);
-        final BigDecimal expectedAmount = BigDecimal.valueOf(4.0559).setScale(CurrencyCalculator.BIG_DECIMAL_SCALE, RoundingMode.HALF_UP);
+        final BigDecimal expectedAmount = BigDecimal.valueOf(4.000).setScale(CurrencyCalculator.BIG_DECIMAL_SCALE, RoundingMode.HALF_UP);
         when(nbpServiceClient.getAllRates()).thenReturn(getMockedRates());
         // when
         final BigDecimal calculatedAmount = nbpService.calculateValue(fromCurrency, toCurrency, givenAmount);
@@ -39,7 +39,7 @@ class NbpServiceTest {
         final Currencies fromCurrency = Currencies.PLN;
         final Currencies toCurrency = Currencies.USD;
         final BigDecimal givenAmount = BigDecimal.valueOf(1);
-        final BigDecimal expectedAmount = BigDecimal.valueOf(0.2466).setScale(CurrencyCalculator.BIG_DECIMAL_SCALE, RoundingMode.HALF_UP);
+        final BigDecimal expectedAmount = BigDecimal.valueOf(0.2500).setScale(CurrencyCalculator.BIG_DECIMAL_SCALE, RoundingMode.HALF_UP);
         when(nbpServiceClient.getAllRates()).thenReturn(getMockedRates());
         // when
         final BigDecimal calculatedAmount = nbpService.calculateValue(fromCurrency, toCurrency, givenAmount);
@@ -53,7 +53,7 @@ class NbpServiceTest {
         final Currencies fromCurrency = Currencies.USD;
         final Currencies toCurrency = Currencies.EUR;
         final BigDecimal givenAmount = BigDecimal.valueOf(1);
-        final BigDecimal expectedAmount = BigDecimal.valueOf(0.8790).setScale(CurrencyCalculator.BIG_DECIMAL_SCALE, RoundingMode.HALF_UP);
+        final BigDecimal expectedAmount = BigDecimal.valueOf(0.8889).setScale(CurrencyCalculator.BIG_DECIMAL_SCALE, RoundingMode.HALF_UP);
         when(nbpServiceClient.getAllRates()).thenReturn(getMockedRates());
         // when
         final BigDecimal calculatedAmount = nbpService.calculateValue(fromCurrency, toCurrency, givenAmount);
@@ -67,7 +67,7 @@ class NbpServiceTest {
         final Currencies fromCurrency = Currencies.EUR;
         final Currencies toCurrency = Currencies.USD;
         final BigDecimal givenAmount = BigDecimal.valueOf(1);
-        final BigDecimal expectedAmount = BigDecimal.valueOf(1.1377).setScale(CurrencyCalculator.BIG_DECIMAL_SCALE, RoundingMode.HALF_UP);
+        final BigDecimal expectedAmount = BigDecimal.valueOf(1.1250).setScale(CurrencyCalculator.BIG_DECIMAL_SCALE, RoundingMode.HALF_UP);
         when(nbpServiceClient.getAllRates()).thenReturn(getMockedRates());
         // when
         final BigDecimal calculatedAmount = nbpService.calculateValue(fromCurrency, toCurrency, givenAmount);
@@ -77,8 +77,8 @@ class NbpServiceTest {
 
     private Rates getMockedRates() {
         final List<Rate> rates = new ArrayList<>();
-        rates.add(new Rate("4.0559", "USD"));
-        rates.add(new Rate("4.6142", "EUR"));
+        rates.add(new Rate("4.000", "USD"));
+        rates.add(new Rate("4.500", "EUR"));
         return new Rates(rates);
     }
 }

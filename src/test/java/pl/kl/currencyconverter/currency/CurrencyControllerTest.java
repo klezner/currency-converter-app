@@ -8,12 +8,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import pl.kl.currencyconverter.exception.SameCurrenciesGivenException;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -36,8 +35,7 @@ class CurrencyControllerTest {
 
         mockMvc.perform(params)
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("4.05")));
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -80,5 +78,22 @@ class CurrencyControllerTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof SameCurrenciesGivenException));
+    }
+
+    @Test
+    void shouldReturnStatusBadRequest_whenCurrencyIsNotFoundInApiResponse() throws Exception {
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("fromCurrency", "PLN");
+        httpHeaders.add("toCurrency", "TZS");
+        httpHeaders.add("amount", "1");
+
+        final MockHttpServletRequestBuilder params = MockMvcRequestBuilders
+                .get("/currency")
+                .params(httpHeaders);
+
+        mockMvc.perform(params)
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentTypeMismatchException));
     }
 }
