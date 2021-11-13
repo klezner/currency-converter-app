@@ -76,9 +76,9 @@ class NbpServiceTest {
     }
 
     private Rates getMockedRates() {
-        final List<Rate> rates = new ArrayList<>();
-        rates.add(new Rate("4.000", "USD"));
-        rates.add(new Rate("4.500", "EUR"));
-        return new Rates(rates);
+        final List<Rate> newRates = new ArrayList<>();
+        newRates.add(new Rate("4.000", "USD"));
+        newRates.add(new Rate("4.500", "EUR"));
+        return new Rates(newRates);
     }
 }
